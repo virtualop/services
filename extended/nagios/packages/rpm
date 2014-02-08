@@ -1,0 +1,11 @@
+php
+gcc
+glibc
+glibc-common
+gd
+gd-devel
+automake
+gettext
+make
+perl
+openssl-devel

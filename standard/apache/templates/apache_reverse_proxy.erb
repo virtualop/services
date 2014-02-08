@@ -1,0 +1,32 @@
+<VirtualHost *:<%= params["listen_port"] %>>
+    #ServerAdmin webmaster@localhost
+
+	<% names = params["server_name"] %>
+    ServerName <%= names.first %>
+    <% names[1..names.size-1].each do |name| %>
+    ServerAlias <%= name %>
+    <% end %>
+
+	<% if params["target_url"].size > 1 %>
+	  <Proxy balancer://mycluster/>
+		<% params["target_url"].each do |target_url| %>
+		  BalancerMember <%= target_url %>
+		<% end %>
+	  </Proxy>
+	  ProxyPass / balancer://mycluster/ 
+	<% else %>
+	  <%# TODO make sure target_url ends with a slash %>
+	  <% target_url = params["target_url"].first %>
+	  ProxyPass / <%= (/\/$/.match(target_url) ? target_url : target_url + '/') %>
+	  ProxyPassReverse / <%= target_url %>
+	<% end %>
+
+    ProxyPreserveHost On
+    <% if params.has_key?("timeout") %>
+    ProxyTimeout <%= params["timeout"] %>
+    <% end %>
+    
+	LogLevel warn
+    ErrorLog <%= apache_log_dir %>/<%= first_domain %>.error.log
+    CustomLog <%= apache_log_dir %>/<%= first_domain %>.vop.access.log vop
+</VirtualHost>

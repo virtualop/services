@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+    #ServerAdmin admin@localhost.com
+
+    ServerName <%= params["server_name"].first %>    
+    
+    DocumentRoot <%= params["document_root"] %>
+
+    <Directory <%= params["document_root"] %> >
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+        
+        <%= @directory_includes %>
+    </Directory>
+    
+	LogLevel warn
+    ErrorLog <%= machine.apache_log_dir %>/<%= first_domain %>.error.log
+    CustomLog <%= machine.apache_log_dir %>/<%= first_domain %>.vop.access.log vop
+</VirtualHost>
