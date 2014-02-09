@@ -30,7 +30,10 @@ on_machine do |m, params|
             h["document_root"] = matched.captures.first
           elsif matched = /CustomLog\s+(.+)\s+(.+)/.match(line)
             h["log_path"] = matched.captures.first
-            h["log_format"] = matched.captures.last        
+            h["log_format"] = matched.captures.last
+          elsif matched = /ErrorLog\s+(.+)/.match(line)
+            h["error_log_path"] = matched.captures.first
+            h["error_log_format"] = 'server_log'
           end        
         end
         h.values.each do |x| 
