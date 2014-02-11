@@ -39,7 +39,8 @@ on_machine do |machine, params|
             "service" => service["full_name"],
             "path" => vhost["error_log_path"],
             "source" => "apache",
-            "format" => vhost["error_log_format"]
+            "format" => vhost["error_log_format"],
+            "parser" => 'apache_error'
           }
         end
         
