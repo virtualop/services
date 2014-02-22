@@ -1,2 +1,4 @@
 dependencies [ :core, :machines, :erb_processor ]
 
+config_param 'screenshot_path', 'the path where screenshots should be stored. might be published if a domain parameter is used', 
+  :default_value => '/var/www/html/screenshots'

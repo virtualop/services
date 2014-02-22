@@ -10,6 +10,8 @@ param "bind_user", "ldap search string identifying the user to use for binding t
 param "bind_password", "the password to use for LDAP binding"
 param "selenium_machine", "a machine on which selenium tests can be executed"
 
+param 'no_init', 'set to true to skip the initialization (e.g. if you want to see the install screen)', :default_value => false
+
 on_machine do |machine, params|
   # TODO move into static_html, :document_root => 'foo' ?
   machine.add_static_vhost("server_name" => params["domain"], "document_root" => "/var/www/html/owncloud")
@@ -18,11 +20,13 @@ on_machine do |machine, params|
   
   machine.ssh "curl -c cookies.txt -v -o /dev/null http://#{params["domain"]}/index.php"
   
-  init_config = "install=true&adminlogin=#{params['admin_user']}&adminpass=#{params['admin_password']}&directory=%2Fvar%2Fwww%2Fhtml%2Fowncloud%2Fdata&dbtype=sqlite&dbuser=&dbpass=&dbname=&dbhost=localhost" 
-  machine.ssh "curl -b cookies.txt -c cookies2.txt -v -d '#{init_config}' http://#{params["domain"]}/"
-  @op.comment machine.read_file("file_name" => "cookies2.txt")
-
-  if params.has_key?('ldap_host') && params.has_key?('selenium_machine')
-    machine.owncloud_ldap(params)
+  unless params['no_init']
+    init_config = "install=true&adminlogin=#{params['admin_user']}&adminpass=#{params['admin_password']}&directory=%2Fvar%2Fwww%2Fhtml%2Fowncloud%2Fdata&dbtype=sqlite&dbuser=&dbpass=&dbname=&dbhost=localhost" 
+    machine.ssh "curl -b cookies.txt -c cookies2.txt -v -d '#{init_config}' http://#{params["domain"]}/"
+    @op.comment machine.read_file("file_name" => "cookies2.txt")
+  
+    if params.has_key?('ldap_host') && params.has_key?('selenium_machine')
+      machine.owncloud_ldap(params)
+    end
   end
 end
