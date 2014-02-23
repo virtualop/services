@@ -3,11 +3,13 @@ param! 'github_repo'
 param 'rpm_name'
 param 'tree', 'a github branch or release to use', :default_value => 'master'
 param 'source_repo', 'extra github repo that should be downloaded and used as source', :allows_multiple_values => true
+param 'target_dir', 'the directory where the created RPMS should be copied to',
+  :default_value => '/var/www/html/packages/rpm'  
 
 accept_extra_params
 
 on_machine do |machine, params|
-  target_dir = "/var/www/html/packages/rpm"
+  target_dir = params['target_dir']
   
   params['source_repo'].each do |source_repo|
     p = params.clone
