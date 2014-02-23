@@ -10,7 +10,7 @@ on_machine do |machine, params|
   tree = params['tree']
   target = params['rpm_name'] ? params['rpm_name'] : "#{github_repo.gsub('/', '-')}-#{tree}"
   
-  machine.wget("target_dir" => sources, "url" => "https://github.com/#{github_repo}/archive/#{tree}.tar.gz")
+  machine.wget("target_dir" => sources, "url" => "https://codeload.github.com/#{github_repo}/tar.gz/#{tree}")
   
   # we get an archive with the name of the tree
   # inside is a folder that is the repo name (without owner) and the tree
