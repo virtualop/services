@@ -2,7 +2,8 @@ user 'selenium'
 
 canned_service 'rvm/rvm', { :ruby_version => "1.9.3", :user => @service['user'] }
 
-run_command "xvfb-run java -jar selenium-server-standalone*.jar"
+#run_command "xvfb-run java -jar selenium-server-standalone*.jar"
+run_command "java -jar selenium-server-standalone*.jar"
 
 process_regex "selenium-server-standalone"
 

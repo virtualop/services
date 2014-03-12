@@ -3,22 +3,21 @@ puts login_filter.text
 login_filter.click
 
 puts "waiting"
-sleep 5
+sleep 2
 
-other_attributes = driver.find_element(:id, 'ldap_loginfilter_attributes')
+login_toggle = driver.find_element(:id, 'toggleRawLoginFilter')
+login_filter = driver.find_element(:id, 'ldap_login_filter')
 
-puts "other_attributes displayed : #{other_attributes.displayed?}"
-puts driver.execute_script("$('#ldap_loginfilter_attributes').show(); return 42;")
-puts "other_attributes displayed : #{other_attributes.displayed?}"
+puts "login filter visible ? #{login_filter.displayed?}"
 
-other_attributes.click
+unless login_filter.displayed?
+  login_toggle.click
+  sleep 2
+end
 
-puts "waiting"
-sleep 5
+puts "login_filter visible ? #{login_filter.displayed?}"
 
-select = Select.new(other_attributes)
-puts select.options.map { |x| x.text }
-select.deselect_all
-select.select_by(:value, 'cn')
-selected = select.selected_options.map { |x| x.text }
-puts "login filter done; selected : #{selected}"
+login_filter.clear
+login_filter.send_keys '(&(|(objectclass=person))(|(uid=%uid)(|(cn=%uid))))'
+
+driver.find_element(:class, 'ldap_action_continue').click()

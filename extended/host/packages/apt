@@ -1,6 +1,5 @@
-#xen-hypervisor
 qemu-kvm
-libvirt
+libvirt-bin
 virt-goodies
 virt-top
 virtinst

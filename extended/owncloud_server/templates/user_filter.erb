@@ -1,42 +1,22 @@
+driver.navigate.to "http://<%= params["domain"] %>/index.php/settings/admin"
+puts "configuring..."
+
 user_filter = driver.find_element(:id, 'ui-id-2')
 puts user_filter.text
 user_filter.click
 sleep 5
 
-object_class = driver.find_element(:id, 'ldap_userfilter_objectclass')
-puts "object_class displayed : #{object_class.displayed?}"
-puts driver.execute_script("$('#ldap_userfilter_objectclass').show(); return 42;")
-puts "object_class displayed : #{object_class.displayed?}"
+raw_toggle = driver.find_element(:id, 'toggleRawUserFilter')
+raw_filter = driver.find_element(:id, 'ldap_userlist_filter')
 
-object_class.click
+puts "raw_filter visible ? #{raw_filter.displayed?}"
 
-count = driver.find_element(:id, 'ldap_user_count')
+unless raw_filter.displayed?
+  raw_toggle.click
+  sleep 2
+end
 
-puts "waiting"
-sleep 5
-puts "count : #{count.text}"
+puts "raw_filter visible ? #{raw_filter.displayed?}"
 
-puts "waiting"
-sleep 5
-puts "count : #{count.text}"
-
-select = Select.new(object_class)
-puts select.options.map { |x| x.text }
-select.deselect_all
-select.select_by(:value, 'person')
-selected = select.selected_options.map { |x| x.text }
-puts "object_class user filter done; selected : #{selected}"
-
-count.click
-#select.click
-#object_class.click
-
-driver.find_element(:class, 'ldap_action_continue').click()
-
-puts "waiting"
-sleep 5
-puts "count : #{count.text}"
-
-puts "waiting"
-sleep 5
-puts "count : #{count.text}"
+raw_filter.clear
+raw_filter.send_keys '(objectclass=person)'

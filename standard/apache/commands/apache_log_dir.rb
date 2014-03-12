@@ -6,6 +6,8 @@ on_machine do |machine, params|
     '/var/log/apache2'
   when "centos"
     '/var/log/httpd'
+  when "ubuntu"
+    '/var/log/apache2'
   else
     nil
   end

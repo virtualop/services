@@ -10,16 +10,21 @@ param "bind_user", "ldap search string identifying the user to use for binding t
 param "bind_password", "the password to use for LDAP binding"
 param "selenium_machine", "a machine on which selenium tests can be executed"
 
+param 'template', 'use to select which selenium templates should be processed', :allows_multiple_values => true
+
 on_machine do |machine, params|
   ldap_base = CGI.escapeHTML(params['ldap_domain'].split('.').map { |x| "dc=#{x}" }.join(','))
     
   bind_user = CGI.escapeHTML(params["bind_user"])
   bind_password = params['bind_password']
   
-  #selenium = read_local_template(:ldap_config, binding())
   selenium = ''
-  templates = %w|owncloud_login enable_ldap|
-  templates += %w| connection advanced user_filter login_filter|
+  templates = %w|owncloud_login|
+  if params['template']
+    templates += params['template']
+  else
+    templates += %w|enable_ldap connection advanced user_filter login_filter|
+  end
   templates.each do |template|
     selenium += "\n\n# +++ #{template} +++\n" + read_local_template(template.to_sym, binding())
   end

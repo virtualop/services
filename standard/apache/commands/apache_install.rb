@@ -14,7 +14,6 @@ on_machine do |m, params|
     if machine.linux_distribution.split("_").first == "centos"
       process_local_template(:httpd_conf, machine, "/etc/httpd/conf/httpd.conf", binding())
     elsif machine.linux_distribution.split("_").first == "sles"
-      #machine.ssh("command" => "sed -i -e 's/\#NameVirtualHost \*:80/NameVirtualHost *:80/' /etc/apache2/listen.conf")
       machine.replace_in_file("file_name" => "/etc/apache2/listen.conf",
         "source" => "\#NameVirtualHost \\*:80",
         "target" => "NameVirtualHost *:80"
@@ -28,12 +27,17 @@ on_machine do |m, params|
     process_local_template(:index_html, machine, target_file_name, binding())
     machine.allow_access_for_apache("file_name" => target_file_name)
     
-    if machine.linux_distribution.split("_").first == "sles"
-      %w|proxy proxy_http proxy_balancer rewrite|.each do |m|
-        machine.ssh("command" => "a2enmod #{m}")
+    if %w|sles ubuntu|.include? machine.distro
+      %w|proxy proxy_http proxy_balancer rewrite|.each do |mod|
+        machine.ssh "a2enmod #{mod}"
       end
     end
     
-    process_local_template(:custom_log, machine, "/etc/apache2/conf.d/logformat_vop.conf", binding())
+    if machine.file_exists('/etc/apache2/conf-available') && machine.file_exists('/etc/apache2/conf-enabled')
+      process_local_template(:custom_log, machine, "/etc/apache2/conf-available/logformat_vop.conf", binding())
+      machine.ssh 'cd /etc/apache2/conf-enabled && ln -s ../conf-available/logformat_vop.conf'
+    elsif machine.file_exists('/etc/apache2/conf.d')
+      process_local_template(:custom_log, machine, "/etc/apache2/conf.d/logformat_vop.conf", binding())
+    end
   end
 end
