@@ -6,11 +6,11 @@ param 'no_init', 'set to true to skip the initialization (e.g. if you want to se
 param 'admin_user', 'user name for the first administrative account', :default_value => 'admin'
 param 'admin_password', 'password for the first administrative account', :default_value => 'the_password'
 
-param 'db_type', 'type of database to use', :default_value => 'sqlite'
+param 'db_type', 'type of database to use', :default_value => 'sqlite', :lookup_method => lambda { %w|sqlite mysql| }
 param 'db_host', 'IP or hostname of the machine where the database is running', :default_value => 'localhost'
-param 'db_user'
+param 'db_user', '', :default_value => 'owncloud'
 param 'db_pass'
-param 'db_name'
+param 'db_name', '', :default_value => 'owncloud'
 
 param "ldap_host", "hostname or IP of a LDAP server used for auth"
 param "ldap_domain", "the domain that should be used to construct the base DN (e.g. foo.org will be transformed to dc=foo,dc=org)"
@@ -19,11 +19,13 @@ param "bind_password", "the password to use for LDAP binding"
 param "selenium_machine", "a machine on which selenium tests can be executed"
 
 on_machine do |machine, params|
+ 
   # TODO move into static_html, :document_root => 'foo' ?
   machine.add_static_vhost("server_name" => params["domain"], "document_root" => "/var/www/html/owncloud")
   machine.restart_service 'apache/apache'
+  puts machine.status_service('service' => 'apache/apache')
   machine.configure_reverse_proxy("domain" => params["domain"])
-  
+  #machine.start_service('service' => 'apache/apache') 
   
   unless params['no_init']
     if params['db_type'] == 'mysql'
@@ -54,7 +56,10 @@ on_machine do |machine, params|
     machine.ssh "curl -b cookies.txt -v -d '#{post_string}' http://#{params["domain"]}/"
   
     if params.has_key?('ldap_host') && params.has_key?('selenium_machine')
-      machine.owncloud_ldap(params)
+      machine.owncloud_ldap(params.merge('template' => ['enable_ldap']))
+      machine.owncloud_appconfig_ldap(params)
     end
   end
+  
+  
 end

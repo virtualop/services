@@ -6,6 +6,8 @@ param! "target_url", "http url to the backend", :allows_multiple_values => true
 param "timeout", "configuration for the ProxyTimeout directice - timeout in seconds to wait for a proxied response"
 param "listen_port", "the port on which to listen (ha!)", :default_value => 80
 
+param "without_reload"
+
 as_root do |machine, params|
   generated_dir = machine.apache_generated_conf_dir
   apache_log_dir = machine.apache_log_dir
@@ -15,5 +17,5 @@ as_root do |machine, params|
   
   @op.without_cache do
     machine.list_configured_vhosts
-  end
+  end unless params['without_reload']
 end

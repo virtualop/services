@@ -6,6 +6,8 @@ add_columns [ :domain, :target_ip, :document_root, :file_name ]
 
 mark_as_read_only
 
+include_for_crawling
+
 on_machine do |m, params|
   result = []
   # TODO we could think about carefully trying to include "/etc/httpd/conf.d/" (avoiding stuff like php.conf)

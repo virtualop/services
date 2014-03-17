@@ -2,8 +2,8 @@ description "adds a virtual host for static files to the apache configuration"
 
 param :machine
 
-param "server_name", "the http domain served by this vhost", { :mandatory => true, :allows_multiple_values => true }
-param "document_root", "fully qualified path to the directory holding the static files", :mandatory => true
+param! "server_name", "the http domain served by this vhost", :allows_multiple_values => true
+param! "document_root", "fully qualified path to the directory holding the static files"
 param "twist", "some extra content that should be included in the Directory section of the generated config"
 
 as_root do |machine, params|

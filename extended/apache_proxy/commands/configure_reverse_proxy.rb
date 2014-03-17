@@ -5,6 +5,9 @@ param! "domain", "the domain at which the service should be available", :allows_
 param "timeout", "configuration for the ProxyTimeout directice - timeout in seconds to wait for a proxied response"
 param "proxy", "name of the machine where the proxy is running"
 param "port", "a port to forward to (defaults to 80)"
+param "restart", "set to true to restart the proxy to apply the configuration immediately",
+  :lookup_method => lambda { %w|true false| }, :default_value => 'true'
+param "without_reload"
 
 on_machine do |machine, params|
   
@@ -14,20 +17,21 @@ on_machine do |machine, params|
     port = params.has_key?("port") ? ':' + params["port"] : ''
     p = {
       "server_name" => params["domain"], 
-      "target_url" => "http://#{machine.ipaddress}#{port}/"
-    }.merge_from params, :timeout, :invalidation
+      "target_url" => "http://#{machine.ipaddress}#{port}/",
+      'without_reload' => true
+    }.merge_from params, :timeout, :without_reload
     proxy.add_reverse_proxy(p)
-    #services = proxy.list_services.map { |x| x["full_name"] }
-    services = proxy.list_installed_services
-    service_name = nil
-    # TODO snafu
-    if services.include?('apache/apache')
-      service_name = 'apache/apache'
-    elsif services.include? 'apache'
-      service_name = 'apache'
-    end
-    if service_name
-      proxy.restart_service service_name
+
+    if params['restart'].to_s == 'true'    
+      services = proxy.list_installed_services
+      service_name = nil
+      # TODO snafu
+      if services.include?('apache/apache')
+        service_name = 'apache/apache'
+      elsif services.include? 'apache'
+        service_name = 'apache'
+      end
+      proxy.restart_service(service_name) if service_name
     end
   end
 end
