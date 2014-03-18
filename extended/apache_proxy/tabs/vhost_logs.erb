@@ -1,0 +1,25 @@
+<div id="vhost_logs">
+	
+<p>overall max : <%= overall_max %></p>
+
+<% graphs.each do |domain_name, graph_data| %>
+<div class="vhost_graph">
+	<p><%= domain_name %></p>
+	<%= render :partial => 'graph', :locals => {
+	    :identifier => "vhost_traffic_#{domain_name.gsub('.', '_')}",
+	    :data => graph_data,
+	    :graph_width => 400,
+	    :extra_options => 'series: {
+	      lines: {
+	        show: true,
+	        fill: true,
+	        steps: false
+	      },
+	      yaxis: {
+	      	max: 100
+	      }
+	     }'
+	} %>
+</div>	
+<% end %>	
+</div>

@@ -5,3 +5,5 @@ dependency :apache
 
 dependency :machine_groups
 dependency :machine_crawler
+
+dependency :vop_webapp
