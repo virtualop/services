@@ -31,9 +31,12 @@ on_machine do |machine, params|
     machine.add_static_vhost(vhost_options)
     machine.allow_access_for_apache("file_name" => vhost_options['document_root'])
     machine.restart_service 'apache/apache'
-    # TODO this does not update old entries
-    unless machine.list_domains_pointing_to_machine.include? domain
-      machine.configure_reverse_proxy("domain" => domain)
+    
+    if machine.proxy
+      # TODO this does not update old entries
+      unless machine.list_domains_pointing_to_machine.include? domain
+        machine.configure_reverse_proxy("domain" => domain)
+      end
     end
   end
 end
