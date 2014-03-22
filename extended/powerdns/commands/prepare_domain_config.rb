@@ -1,18 +1,30 @@
 description "prepares a powerdns instance to host a domain"
 
 param :machine
-param! "domain", "name of the domain that should be resolved"
+
+param "domain", "if specified, the nameserver is preconfigured for the specified domain"
+param "ip", "if specified, a set of A and PTR records will be created for the domain and IP"
 
 on_machine do |machine, params|
-  machine.execute_sql("database" => "powerdns", "statement" => "insert into domains (name) values ('#{params["domain"]}')")
-  data = mysql_xml_to_rhcp machine.execute_sql("database" => "powerdns", "statement" => "select id from domains where name = '#{params["domain"]}'", "xml" => "true")
-  id = data.first["id"]
-  
-  [
-    "insert into records (domain_id, name, type, content, ttl) values (#{id}, '#{params["domain"]}', 'SOA', 'localhost #{machine.name} 1', 86400)",
-    "insert into records (domain_id, name, type, content, ttl) values (#{id}, '#{params["domain"]}', 'NS', 'ns1.#{params["domain"]}', 86400)",
-    "insert into records (domain_id, name, type, content, ttl) values (#{id}, '#{params["domain"]}', 'NS', 'ns2.#{params["domain"]}', 86400)",
-  ].each do |statement|
-    machine.execute_sql("database" => "powerdns", "statement" => statement)
+  machine.domain_base_records("domain" => params["domain"])
+    
+  if params['ip']
+    machine.add_domain_record(
+      'domain' => params["domain"],
+      'name' => params['domain'],
+      'type' => 'A',
+      'content' => params['ip']      
+    )
+    
+    ip_parts = params['ip'].split('.')
+    reverse_zone = ip_parts[0..2].reverse.join('.') + '.in-addr.arpa'
+    machine.domain_base_records('domain' => reverse_zone)
+    
+    machine.add_domain_record(
+      'domain' => reverse_zone,
+      'name' => ip_parts.reverse.join('.') + '.in-addr.arpa',
+      'type' => 'PTR',
+      'content' => params['domain'] 
+    )
   end
 end
