@@ -3,7 +3,7 @@ description "changes the permissions of a file so that the apache service can re
 param :machine
 param! "file_name", "path to the file that should be modified"
 
-on_machine do |machine, params|
+as_root do |machine, params|
   user = case machine.linux_distribution.split("_").first
   when "ubuntu"
     "www-data"
@@ -14,6 +14,6 @@ on_machine do |machine, params|
   else
     nil
   end
-  machine.chown("file_name" => params["file_name"], "ownership" => "#{user}:") unless user == nil
-  #machine.chmod("file_name" => params["file_name"], "permissions" => "#{permissions}:")
+  machine.chown("file_name" => params["file_name"], "ownership" => ":#{user}") unless user == nil
+  machine.chmod("file_name" => params["file_name"], "permissions" => "g+rx")
 end  
