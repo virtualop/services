@@ -8,6 +8,9 @@ mark_as_read_only
 
 include_for_crawling
 
+# TODO this makes the (standard) apache plugin depend on the domain in (extended), not good
+contributes_to :list_domains
+
 on_machine do |m, params|
   result = []
   # TODO we could think about carefully trying to include "/etc/httpd/conf.d/" (avoiding stuff like php.conf)

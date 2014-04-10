@@ -22,7 +22,7 @@ on_machine do |machine, params|
     }
     options = service["static_html"]
     if options.is_a?(Hash)
-      [ 'twist', 'document_root' ].each do |key|
+      [ 'twist', 'erb_twist', 'document_root' ].each do |key|
         if options.has_key?(key)
           vhost_options[key] = options[key]
         end

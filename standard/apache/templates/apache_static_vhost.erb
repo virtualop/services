@@ -11,8 +11,10 @@
         Order allow,deny
         allow from all
         
-        <%= @directory_includes %>
+        <%= directory_includes %>
     </Directory>
+    
+    <%= vhost_includes %>
     
 	LogLevel warn
     ErrorLog <%= machine.apache_log_dir %>/<%= first_domain %>.error.log

@@ -2,7 +2,7 @@ description 'configures a reverse proxy virtualop host on the proxy machine sitt
 
 param :machine
 param! "domain", "the domain at which the service should be available", :allows_multiple_values => true
-param "timeout", "configuration for the ProxyTimeout directice - timeout in seconds to wait for a proxied response"
+param "timeout", "configuration for the ProxyTimeout directive - timeout in seconds to wait for a proxied response"
 param "proxy", "name of the machine where the proxy is running"
 param "port", "a port to forward to (defaults to 80)"
 param "restart", "set to true to restart the proxy to apply the configuration immediately",
