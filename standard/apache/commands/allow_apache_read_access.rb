@@ -3,8 +3,8 @@ description "changes the permissions of a file so that the apache service can re
 param :machine
 param! "file_name", "path to the file that should be modified"
 
-as_root do |machine, params|
-  user = case machine.linux_distribution.split("_").first
+on_machine do |machine, params|
+  apache_user = case machine.linux_distribution.split("_").first
   when "ubuntu"
     "www-data"
   when "sles"
@@ -14,6 +14,9 @@ as_root do |machine, params|
   else
     nil
   end
-  machine.chown("file_name" => params["file_name"], "ownership" => ":#{user}") unless user == nil
-  machine.chmod("file_name" => params["file_name"], "permissions" => "g+rx")
+  file_name = params['file_name']
+  machine.as_user("root") do |as_root|
+    as_root.chown("file_name" => file_name, "ownership" => ":#{apache_user}") unless apache_user == nil
+    as_root.chmod("file_name" => file_name, "permissions" => "g+rx")
+  end
 end  

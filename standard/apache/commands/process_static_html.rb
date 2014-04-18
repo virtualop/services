@@ -29,7 +29,7 @@ on_machine do |machine, params|
       end
     end
     machine.add_static_vhost(vhost_options)
-    machine.allow_access_for_apache("file_name" => vhost_options['document_root'])
+    machine.allow_apache_read_access("file_name" => vhost_options['document_root'])
     machine.restart_service 'apache/apache'
     
     if machine.proxy
