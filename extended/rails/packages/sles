@@ -1,9 +1,0 @@
-ruby
-ruby-devel
-rubygems
-rubygem-rake
-make
-gcc
-gcc-c++
-ruby-mysql
-libmysqlclient-devel

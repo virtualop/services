@@ -1,9 +1,0 @@
-ruby
-ruby-devel
-make
-gcc
-gcc-c++
-mysql-devel
-ruby-mysql
-ruby-sqlite3
-sqlite-devel

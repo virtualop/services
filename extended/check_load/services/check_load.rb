@@ -1,1 +1,0 @@
-nagios_check "load" => "check_load_by_ssh"

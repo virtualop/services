@@ -1,5 +1,0 @@
-dependencies [ :core, :machines, :erb_processor ]
-
-on_activation do |plugin, config|
-  require 'cgi'
-end

@@ -1,5 +1,0 @@
-#!/bin/bash
-
-[ -f <%= machine.home %>/.profile ] && . <%= machine.home %>/.profile || . /etc/profile
-[ -f <%= machine.home %>/.rvm/scripts/rvm ] && . <%= machine.home %>/.rvm/scripts/rvm
-<%= params["command"] %>

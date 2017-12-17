@@ -1,1 +1,0 @@
-#see http://www.semicomplete.com/projects/xdotool/
