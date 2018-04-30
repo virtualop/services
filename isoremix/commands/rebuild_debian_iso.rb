@@ -44,6 +44,14 @@ run do |machine, source_iso, just_kidding|
   source_path = "/var/local/lib/isoremix/clean/#{source_iso}"
   target_path = "/var/local/lib/isoremix/rebuilt/#{base_name}.rebuild#{idx}.iso"
 
+  # TODO potentially:
+  # machine.rebuild_debian_iso_file(
+  #   source: source_path,
+  #   target: target_path,
+  #   preseed_file: preseed_file,
+  #   extra_dir: extra_dir
+  # )
+
   # and go
   rebuild_cmd = "rebuild-debian-iso #{source_path} #{target_path} #{preseed_file} #{extra_dir}"
 
