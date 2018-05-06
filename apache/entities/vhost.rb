@@ -4,6 +4,14 @@ on :machine
 
 show columns: [ "name", "enabled" ]
 
+invalidate do |machine|
+  # TODO entity params should be auto-resolved
+  machine = @op.machines[machine]
+
+  machine.enabled_vhosts!
+  machine.available_vhosts!
+end
+
 entity do |machine|
   machine = @op.machines[machine]
 

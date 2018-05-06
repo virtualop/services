@@ -30,8 +30,7 @@ run do |plugin, machine, server_name, vhost_config, port|
   end
 
   # invalidate
-  machine.list_files! "/etc/apache2/sites-enabled"
-  machine.list_files! "/etc/apache2/sites-available"
+  machine.vhosts!
   machine.read_file! file: available_path
 
   machine.sudo("service apache2 restart")
