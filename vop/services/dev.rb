@@ -21,7 +21,8 @@ deploy do |machine, params|
   machine.write_systemd_config(
     "name" => "vop-web",
     "user" => "marvin",
-    "exec_start" => "#{machine.home}/web/bin/web.sh"
+    "exec_start" => "#{machine.home}/web/bin/web.sh",
+    "after" => "redis.service"
   )
   machine.write_systemd_config(
     "name" => "vop-background",
