@@ -1,3 +1,6 @@
+binary_name "./vop/bin/vop.sh"
+icon "vop_16px.png"
+
 deploy package: %w|ruby ruby-dev ruby-bundler| +
                 %w|build-essential| +
                 %w|redis-server openssh-server|
@@ -24,6 +27,7 @@ deploy do |machine, params|
     "exec_start" => "#{machine.home}/web/bin/web.sh",
     "after" => "redis.service"
   )
+
   machine.write_systemd_config(
     "name" => "vop-background",
     "user" => "marvin",
@@ -31,7 +35,14 @@ deploy do |machine, params|
     "after" => "redis.service"
   )
 
-  %w|vop-web vop-background|.each do |name|
+  machine.write_systemd_config(
+    "name" => "vop-message-pump",
+    "user" => "marvin",
+    "exec_start" => "#{machine.home}/vop/web/message-pump.sh",
+    "after" => "redis.service"
+  )
+
+  %w|vop-web vop-background vop-message-pump|.each do |name|
     machine.enable_systemd_service name
     machine.start_systemd_service name
   end
@@ -46,7 +57,5 @@ deploy do |machine, params|
     target_url: "http://#{machine.internal_ip}/"
   )
 
+  machine.vop_init
 end
-
-binary_name "./vop/bin/vop.sh"
-icon "vop_16px.png"
