@@ -1,5 +1,5 @@
 param :machine
-param "count"
+param "count", default: 25
 
 run do |machine, count|
   count = count ? "-n#{count} " : ""

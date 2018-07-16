@@ -1,2 +1,4 @@
 # TODO is that still true?
 depends_on :libvirt
+
+require "date"
