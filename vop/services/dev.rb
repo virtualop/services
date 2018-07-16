@@ -38,7 +38,7 @@ deploy do |machine, params|
   machine.write_systemd_config(
     "name" => "vop-message-pump",
     "user" => "marvin",
-    "exec_start" => "#{machine.home}/vop/web/message-pump.sh",
+    "exec_start" => "#{machine.home}/web/bin/message-pump.sh",
     "after" => "redis.service"
   )
 
