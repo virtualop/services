@@ -59,7 +59,6 @@ run do |data, interval|
     end
   end
 
-  out_count = 0
   raw[:success].keys.sort.each do |ts|
     bucket = raw[:success][ts]
     total = 0
@@ -77,11 +76,6 @@ run do |data, interval|
       aggregated[:response_time_ms] << [
         ts, avg
       ]
-    end
-
-    if out_count < 5
-      puts "total for #{ts} : #{total}, count #{count} of #{bucket.size}. avg: #{avg}"
-      out_count += 1
     end
   end unless raw[:success] == nil
 
