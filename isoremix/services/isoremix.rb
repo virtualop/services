@@ -7,7 +7,7 @@ deploy create: {
 }
 
 deploy files: "rebuild-debian-iso",
-  to: isoremix_root
+  to: bin_path
 
 deploy template: "preseed.cfg.erb",
   to: "#{isoremix_root}/preseed.cfg"
