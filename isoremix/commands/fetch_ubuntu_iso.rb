@@ -8,7 +8,7 @@ run do |machine, version|
   upstream_url = "http://releases.ubuntu.com/#{version}"
 
   input = machine.curl "#{upstream_url}/"
-  links = input.scan /<a href="(ubuntu-(#{version}[\.\d]+)-(.+?)-(.+?)\.([^>]+))">/
+  links = input.scan /<a href="(ubuntu-(#{version}[\.\d]+)-(?:live-)?(.+?)-(.+?)\.([^>]+))">/
 
   files = links.map do |link|
     {
