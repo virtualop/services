@@ -59,6 +59,7 @@ run do |machine, source_iso, just_kidding|
     puts "[noop] would run >>#{rebuild_cmd}<<"
   else
     output = machine.sudo(rebuild_cmd)
+    $logger.info "output: #{output}"
     matched = /Output ISO generated:\s+(.+)/m.match(output)
     iso_path = matched.captures.first.strip
 
