@@ -3,8 +3,7 @@ description "adds a name-based virtual host that acts as reverse proxy (forwardi
 param! :machine
 param! "server_name",
   description: "the http domain served by this vhost",
-  default_param: true,
-  multi: true
+  default_param: true, multi: true
 param! "target_url",
   description: "http url to the backend",
   multi: true
@@ -17,7 +16,7 @@ param "timeout",
 
 run do |plugin, machine, server_name, target_url, port, params|
   reverse_proxy_config = @op.read_template(
-    template: File.join(plugin.plugin_dir(:templates), "reverse.proxy.conf.erb"),
+    template: plugin.template_path("reverse.proxy.conf.erb"),
     vars: {
       "target_urls" => target_url,
       "proxy_timeout" => params["timeout"]

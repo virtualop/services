@@ -14,4 +14,5 @@ deploy package: ["apache2"]
 
 deploy do |machine|
   machine.sudo "a2enmod proxy proxy_balancer proxy_http"
+  machine.sudo "a2enmod proxy_wstunnel"
 end

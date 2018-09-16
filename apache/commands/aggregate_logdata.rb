@@ -11,40 +11,31 @@ run do |data, interval|
     if entry.nil?
       $logger.warn("null entry while aggregating logdata")
     else
-      apache_timestamp = entry[:timestamp]
-      # 15/Jul/2018:21:00:22 +0200
-      if matched = /(\d+\/\w+\/\d{4}):([\d:]+)\s+([\+\d]+)/.match(apache_timestamp)
-        parseable = matched.captures[0] + " " + matched.captures[1] + " " + matched.captures[2]
-        $logger.info ("converted #{apache_timestamp} into #{parseable}")
-
-        timestamp = DateTime.parse(parseable)
-        adjusted_timestamp = timestamp.strftime("%s").to_i
-        if %w|minute hour day week|.include? interval
-          adjusted_timestamp -= timestamp.sec
-        end
-        if %w|hour day week|.include? interval
-          adjusted_timestamp -= timestamp.min * 60
-        end
-        if %w|week|.include? interval
-          adjusted_timestamp -= timestamp.hour * 60 * 60
-        end
-        adjusted_timestamp = Time.at(adjusted_timestamp)
-        $logger.info "adjusted : #{timestamp} -> #{adjusted_timestamp}"
-
-        selector = if entry[:status]
-          entry[:status].to_i < 400 ? :success : :failure
-        else
-          :unknown
-        end
-
-        raw[selector] = {} unless raw.has_key? selector
-        hash = raw[selector]
-
-        hash[adjusted_timestamp] = [] unless hash.has_key? adjusted_timestamp
-        hash[adjusted_timestamp] << entry
-      else
-        $logger.warn("unexpected timestamp format: '#{apache_timestamp}'")
+      adjusted_timestamp = entry[:timestamp_unix].to_i
+      timestamp = DateTime.parse(Time.at(adjusted_timestamp).to_s)
+      if %w|minute hour day week|.include? interval
+        adjusted_timestamp -= timestamp.sec
       end
+      if %w|hour day week|.include? interval
+        adjusted_timestamp -= timestamp.min * 60
+      end
+      if %w|week|.include? interval
+        adjusted_timestamp -= timestamp.hour * 60 * 60
+      end
+      adjusted_timestamp = Time.at(adjusted_timestamp)
+      #$logger.debug "adjusted : #{timestamp} -> #{adjusted_timestamp}"
+
+      selector = if entry[:status]
+        entry[:status].to_i < 400 ? :success : :failure
+      else
+        :unknown
+      end
+
+      raw[selector] = {} unless raw.has_key? selector
+      hash = raw[selector]
+
+      hash[adjusted_timestamp] = [] unless hash.has_key? adjusted_timestamp
+      hash[adjusted_timestamp] << entry
     end
   end
 

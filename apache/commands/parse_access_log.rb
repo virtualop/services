@@ -24,6 +24,16 @@ run do |data|
         referrer: result.captures[7],
         user_agent: result.captures[8]
       }
+
+      # parse timestamp
+      apache_timestamp = entry[:timestamp]
+      if matched = /(\d+\/\w+\/\d{4}):([\d:]+)\s+([\+\d]+)/.match(apache_timestamp)
+        parseable = matched.captures[0] + " " + matched.captures[1] + " " + matched.captures[2]
+        timestamp = DateTime.parse(parseable)
+        entry[:timestamp_unix] = timestamp.strftime("%s").to_i
+      else
+        $logger.warn("unexpected timestamp format: '#{apache_timestamp}'")
+      end
     end
 
     entry
