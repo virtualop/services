@@ -48,6 +48,7 @@ deploy do |machine, params|
   end
 
   machine.install_service("apache.reverse_proxy")
+
   machine.add_reverse_proxy(
     server_name: params["domain"],
     target_url: "http://localhost:3000/"
@@ -55,6 +56,16 @@ deploy do |machine, params|
   machine.parent.reverse_proxy.add_reverse_proxy(
     server_name: params["domain"],
     target_url: "http://#{machine.internal_ip}/"
+  )
+
+  cable_domain = "cable.#{params["domain"]}"
+  machine.add_reverse_proxy(
+    server_name: cable_domain,
+    target_url: "ws://localhost:3000/cable/"
+  )
+  machine.parent.reverse_proxy.add_reverse_proxy(
+    server_name: cable_domain,
+    target_url: "ws://#{machine.internal_ip}/cable/"
   )
 
   machine.vop_init
