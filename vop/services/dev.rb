@@ -68,5 +68,8 @@ deploy do |machine, params|
     target_url: "ws://#{machine.internal_ip}/cable/"
   )
 
-  machine.vop_init
+  machine.vop_init(
+    "vop_domain" => params["domain"],
+    "cable_domain" => cable_domain
+  )
 end
