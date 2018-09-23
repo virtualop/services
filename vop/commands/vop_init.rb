@@ -19,5 +19,8 @@ run do |machine, vop_user, params|
     if params["cable_domain"]
       machine.append_to_file(file_name: config_file, content: "export VOP_DOMAIN_CABLE=#{params["cable_domain"]}")
     end
+
+    machine.restart_systemd_service "vop-web"
+    true
   end
 end
