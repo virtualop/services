@@ -18,11 +18,18 @@ run do |plugin, machine, file, count, sudo|
     "dont_loop" => true,
     "on_data" => lambda { |c, data|
       parsed = @op.parse_access_log(data.split("\n"))
-
       redis.publish("tail", {
         "machine" => machine.name,
         "log" => file,
         "content" => parsed
+      }.to_json())
+
+      aggregated = @op.aggregate_logdata(data: parsed, interval: "minute")
+      graph = @op.prepare_graph(graph: aggregated)      
+      redis.publish("graph", {
+        "machine" => machine.name,
+        "log" => file,
+        "content" => graph
       }.to_json())
     },
     "on_stderr" => lambda { |c, data| puts data }
