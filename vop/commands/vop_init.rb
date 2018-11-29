@@ -5,7 +5,7 @@ param "vop_user", default: "marvin"
 param "vop_domain"
 param "cable_domain"
 
-run do |machine, vop_user, params|
+run do |machine, params, vop_user|
   # the vop needs a SSH key to connect to localhost
   machine.generate_keypair
 
@@ -19,6 +19,7 @@ run do |machine, vop_user, params|
     if params["cable_domain"]
       machine.append_to_file(file_name: config_file, content: "export VOP_DOMAIN_CABLE=#{params["cable_domain"]}")
     end
+    machine.chmod(file: config_file, permissions: "+x")
 
     machine.restart_systemd_service "vop-web"
     true
