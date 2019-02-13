@@ -15,8 +15,8 @@ deploy template: "preseed.cfg.erb",
 deploy template: "post_install.sh.erb",
   to: "#{isoremix_root}/extra/post_install.sh"
 
-  deploy template: "authorized_keys.erb",
-    to: "#{isoremix_root}/extra/authorized_keys"
+deploy template: "authorized_keys.erb",
+  to: "#{isoremix_root}/extra/authorized_keys"
 
 deploy package: ["bsdtar", "genisoimage"]
 
